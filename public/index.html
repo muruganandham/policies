@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>15 Card Puzzle - Classic Sliding Puzzle</title>
+  <meta name="description" content="15 Card Puzzle is a modern sliding number puzzle with daily challenges, Game Center leaderboards, and beautiful blue puzzle visuals.">
+  <style>
+:root {
+  --blue-950:#06154a;
+  --blue-900:#08277a;
+  --blue-800:#0645bd;
+  --blue-600:#0788ff;
+  --cyan:#13d9ff;
+  --cyan-soft:#8ceeff;
+  --white:#ffffff;
+  --muted:#c8e7ff;
+  --card:rgba(255,255,255,.12);
+  --card-strong:rgba(255,255,255,.18);
+  --border:rgba(255, 255, 255, 0.193);
+  --shadow:0 24px 80px rgba(0,0,0,.35);
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;
+  color:var(--white);
+  background:
+    radial-gradient(circle at 25% 18%, rgba(19,217,255,.35), transparent 26%),
+    radial-gradient(circle at 80% 12%, rgba(7,136,255,.35), transparent 24%),
+    linear-gradient(160deg, var(--blue-950), var(--blue-800) 52%, #03b7df);
+  min-height:100vh;
+}
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,.12) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,.08) 75%);
+  background-size:160px 160px;
+  opacity:.13;
+}
+a { color:var(--white); text-decoration:none; }
+a:hover { text-decoration:underline; }
+.container { width:min(1120px, calc(100% - 40px)); margin:0 auto; position:relative; }
+.nav {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:24px 0;
+}
+.brand { display:flex; align-items:center; gap:14px; font-weight:900; letter-spacing:-.02em; }
+.logo {
+  width:54px; height:54px; border-radius:16px;
+  background:linear-gradient(160deg,#19e3ff,#0279ff 62%,#003cbe);
+  box-shadow:0 12px 32px rgba(0,0,0,.28), inset 0 2px 0 rgba(255,255,255,.55);
+  display:grid; place-items:center; font-size:28px; font-weight:1000;
+}
+.links { display:flex; gap:18px; align-items:center; font-weight:700; }
+.hero { padding:64px 0 56px; display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:center; }
+.badge {
+  display:inline-flex; gap:8px; align-items:center; padding:10px 14px;
+  border:1px solid var(--border); border-radius:999px; background:var(--card);
+  color:var(--muted); font-weight:800; backdrop-filter:blur(14px);
+}
+h1 {
+  font-size:clamp(48px, 8vw, 96px); line-height:.92; margin:24px 0 18px;
+  letter-spacing:-.07em; text-shadow:0 12px 36px rgba(0,0,0,.28);
+}
+h2 { font-size:clamp(30px,4vw,52px); margin:0 0 18px; letter-spacing:-.04em; }
+h3 { font-size:24px; margin:0 0 10px; }
+p, li { color:var(--muted); font-size:18px; line-height:1.65; }
+.lead { font-size:22px; max-width:680px; color:#e9f8ff; }
+.actions { display:flex; flex-wrap:wrap; gap:14px; margin-top:30px; }
+.button {
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  border-radius:999px; padding:15px 22px; font-weight:900;
+  background:linear-gradient(180deg, #ffffff, #d9f4ff);
+  color:#0055d6; box-shadow:0 12px 32px rgba(0,0,0,.25);
+}
+.button.secondary {
+  background:rgba(255,255,255,.14); color:#fff; border:1px solid var(--border);
+  box-shadow:none;
+}
+.phone-card, .panel {
+  background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+  border:1px solid var(--border); border-radius:34px; padding:22px;
+  box-shadow:var(--shadow); backdrop-filter:blur(18px);
+}
+.board {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+  padding:16px; border-radius:28px;
+  background:linear-gradient(180deg,#031a58,#020b2c);
+  box-shadow:inset 0 0 0 8px rgba(7,136,255,.55), inset 0 2px 0 rgba(255,255,255,.45);
+}
+.tile, .empty {
+  aspect-ratio:1; border-radius:18px; display:grid; place-items:center;
+  font-size:clamp(22px, 4vw, 44px); font-weight:1000;
+}
+.tile {
+  background:linear-gradient(180deg,#19dcff,#047aff 68%,#0252d5);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.55), 0 8px 18px rgba(0,0,0,.35);
+  text-shadow:0 3px 8px rgba(0,0,0,.28);
+}
+.empty { background:linear-gradient(180deg,#061747,#020615); box-shadow:inset 0 8px 22px rgba(0,0,0,.55); }
+.section { padding:44px 0; }
+.grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.panel { border-radius:28px; padding:28px; }
+.icon {
+  width:64px; height:64px; border-radius:50%; display:grid; place-items:center;
+  background:linear-gradient(180deg,#11cfff,#0465e8); font-size:30px;
+  box-shadow:0 10px 25px rgba(0,0,0,.25), inset 0 2px 0 rgba(255,255,255,.4);
+}
+.footer { padding:36px 0 44px; color:var(--muted); font-size:14px; }
+.legal { max-width:900px; padding:38px 0 70px; }
+.legal h1 { font-size:52px; line-height:1; }
+.legal h2 { font-size:30px; margin-top:34px; }
+.legal p, .legal li { font-size:17px; }
+.notice {
+  border-left:4px solid var(--cyan); padding:16px 18px; border-radius:16px;
+  background:rgba(255,255,255,.12); color:#eefcff; margin:24px 0;
+}
+.support-card { max-width:760px; margin:50px auto; }
+input, textarea {
+  width:100%; padding:14px 16px; margin:8px 0 16px; border-radius:16px;
+  border:1px solid var(--border); background:rgba(255,255,255,.12); color:#fff;
+  font:inherit;
+}
+textarea { min-height:140px; }
+label { font-weight:800; }
+.small { font-size:14px; color:var(--muted); }
+@media (max-width:800px) {
+  .hero { grid-template-columns:1fr; padding-top:30px; }
+  .grid { grid-template-columns:1fr; }
+  .links { display:none; }
+}
+</style>
+</head>
+<body>
+  <main class="container">
+    <nav class="nav">
+      <a class="brand" href="index.html"><span class="logo">15</span><span>15 Card Puzzle</span></a>
+      <div class="links">
+        <a href="privacy.html">Privacy</a>
+        <a href="support.html">Support</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div>
+        <span class="badge">🧩 Classic puzzle. Modern feel.</span>
+        <h1>Sharpen your mind, one move at a time.</h1>
+        <p class="lead">Slide numbered tiles, solve the board, and challenge yourself with a polished 15 puzzle experience built for quick play and daily brain training.</p>
+        <div class="actions">
+          <a class="button" href="#">Download on the App Store</a>
+          <a class="button secondary" href="support.html">Get Support</a>
+        </div>
+      </div>
+
+      <div class="phone-card">
+        <div class="board" aria-label="15 Card Puzzle board preview">
+          <div class="tile">1</div><div class="tile">2</div><div class="tile">3</div><div class="tile">4</div><div class="tile">5</div><div class="tile">6</div><div class="tile">7</div><div class="tile">8</div><div class="tile">9</div><div class="tile">10</div><div class="tile">11</div><div class="tile">12</div><div class="tile">13</div><div class="tile">14</div><div class="tile">15</div>
+          <div class="empty"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid">
+        <div class="panel">
+          <div class="icon">🏆</div>
+          <h3>Leaderboard</h3>
+          <p>Compete on Game Center leaderboards and track your best puzzle scores.</p>
+        </div>
+        <div class="panel">
+          <div class="icon">📅</div>
+          <h3>Daily Challenge</h3>
+          <p>Solve a fresh 4×4 challenge every day and keep your puzzle streak alive.</p>
+        </div>
+        <div class="panel">
+          <div class="icon">⚙️</div>
+          <h3>Multiple modes</h3>
+          <p>Play 3×3, classic 4×4, or 5×5 boards with smooth taps, swipes, and haptics.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>© 2026 15 Card Puzzle. All rights reserved. <a href="privacy.html">Privacy Policy</a> · <a href="support.html">Support</a></p>
+    </footer>
+  </main>
+</body>
+</html>
